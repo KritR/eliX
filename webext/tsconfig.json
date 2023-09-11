@@ -10,6 +10,6 @@
     "outDir": "out",
     "strict": true,
     "skipLibCheck": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
   }
 }
