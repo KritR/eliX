@@ -13,7 +13,8 @@ chrome.runtime.onInstalled.addListener(async () => {
 chrome.contextMenus.onClicked.addListener((item, tab) => {
   const id = item.menuItemId;
   const url = new URL(`https://google.com/search`);
-  url.searchParams.set('q', item.selectionText);
-  chrome.tabs.create({ url: url.href, index: tab.index + 1 });
+  if (item.selectionText && tab) {
+    url.searchParams.set('q', item.selectionText);
+    chrome.tabs.create({ url: url.href, index: tab.index + 1 });
+  }
 });
-
