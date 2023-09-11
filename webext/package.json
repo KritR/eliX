@@ -2,13 +2,19 @@
   "name": "elixw",
   "module": "index.ts",
   "type": "module",
-  "devDependencies": {
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
   "scripts": {
-    "deploy": "bun build --minify --splitting --outdir=out ./index.ts ./background.ts"
+    "build": "esbuild index.tsx background.ts --bundle --minify --outdir=dist",
+    "build:dev": "npm run build -- --sourcemap",
+    "watch": "npm run build:dev -- --watch"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.245",
+    "esbuild": "^0.19.2",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@fluentui/react-components": "^9.30.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }
