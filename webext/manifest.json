@@ -3,6 +3,11 @@
   "name": "eliX",
   "description": "Content explanations curated for you!",
   "version": "1.0",
+  "permissions": ["contextMenus", "storage"],
+  "background": {
+    "service_worker": "out/background.js",
+    "type": "module"
+  },
   "action": {
     "default_popup": "index.html",
     "default_icon": "elix_logo.png"

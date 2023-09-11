@@ -9,6 +9,6 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "deploy": "bun build --minify --splitting --outdir=out ./index.ts"
+    "deploy": "bun build --minify --splitting --outdir=out ./index.ts ./background.ts"
   }
 }
