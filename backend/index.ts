@@ -1,9 +1,19 @@
 import { Request, Response } from "express";
+import { rateLimit } from 'express-rate-limit'
 import express from "express";
 import OpenAI from "openai";
 
 const app = express();
 const port = 3000;
+
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 20, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	standardHeaders: 'draft-7', // draft-6: RateLimit-* headers; draft-7: combined RateLimit header
+	legacyHeaders: false, // X-RateLimit-* headers
+	// store: ... , // Use an external store for more precise rate limiting
+});
+
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -50,9 +60,14 @@ const functions = [
   },
 ];
 
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
+
+app.use(limiter);
 
 app.post("/explain", async (req: Request, res: Response) => {
   if (!process.env.OPENAI_API_KEY) {
@@ -65,8 +80,10 @@ app.post("/explain", async (req: Request, res: Response) => {
     return;
   }
 
-  const reqbody = req.body || "";
-  if (reqbody.trim().length === 0) {
+  const reqbody = req.body || {};
+  const reqLen = JSON.stringify(reqbody).trim().length;
+
+  if (reqLen === 0 || reqLen > 2000) {
     res.status(400).json({
       error: {
         message: "Please enter a valid query",
@@ -77,13 +94,13 @@ app.post("/explain", async (req: Request, res: Response) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "text-davinci-003",
+      model: "gpt-3.5-turbo",
       messages: generateMessages(reqbody),
       temperature: 0.6,
       functions: functions,
-      function_call: "explainText",
+      function_call: "auto"
     });
-    res.status(200).json({ result: completion.data.choices[0].text });
+    res.status(200).json(JSON.parse(completion.choices[0].message.function_call.arguments));
   } catch (error) {
     if (error instanceof OpenAI.APIError) {
       // Consider adjusting the error handling logic for your use case
@@ -111,10 +128,10 @@ function generateMessages(req: string) {
     {
       role: "system",
       content: `You are an explanation agent for the ELI5 reddit.
-However, you have been augmented with the capability to provide explanations that are more relevant to tthe user based off the current level of understanding. Each user will provide a selection of text, the url and context where it came from, and their own level of understanding on different topics. The levels of understanding will be out of 10, where 10 is supposed to represent a PHD in the subject and 1 is supposed to be the understanding level of a 5 year old.
+However, you have been augmented with the capability to provide explanations that are more relevant to tthe user based off the current level of understanding. Each user will provide a selection of text, the url and context where it came from, and their own level of understanding on different topics. The levels of understanding will be out of 10, where 10 is supposed to represent a PHD in the subject and 1 is supposed to be the understanding level of a 5 year old. By default assume a user is requesting a 5 year old level explanation. Assume a basic teaching role, unless the user has specified a desired viewpoint.
 
 Please respond by calling the explainText function.`,
     },
-    { role: "user", content: req },
+    { role: "user", content: JSON.stringify(req) },
   ];
 }
