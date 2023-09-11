@@ -1,0 +1,14 @@
+{
+  "name": "elixw",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "deploy": "bun build --minify --splitting --outdir=out ./index.ts"
+  }
+}

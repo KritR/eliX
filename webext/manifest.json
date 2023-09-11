@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "eliX",
+  "description": "Content explanations curated for you!",
+  "version": "1.0",
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "elix_logo.png"
+  }
+}
