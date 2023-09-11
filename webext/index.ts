@@ -1,2 +1,1 @@
-console.log("Hello via Bun!");
-alert("hello");
+// On-extension-click code goes here
