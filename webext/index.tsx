@@ -19,12 +19,11 @@ const useStyles = makeStyles({
   }
 });
 
-function App({ selection, url }: { selection: string | undefined, url: string | undefined }) {
+function App({ selection, url }: { selection: Selection | undefined, url: string | undefined }) {
   const classes = useStyles();
 
   const [explanation, setExplanation] = useState();
   useEffect(() => {
-    console.log('fetching');
     const abortController = new AbortController();
     setExplanation(undefined);
     window.fetch('https://elixbackend.fly.dev/explain', {
@@ -47,7 +46,7 @@ function App({ selection, url }: { selection: string | undefined, url: string | 
       <Title1 className={classes.root}>EliX</Title1>
       <Card>
         <Body1>
-          {selection ?? 'Nothing'}
+          {selection?.type === 'range' ? selection.toString() : 'Nothing'}
         </Body1>
         <Divider />
         <Body1>
@@ -74,11 +73,11 @@ async function getCurrentTab() {
 
 const tab = await getCurrentTab();
 const selection = tab?.id ? (await chrome.scripting.executeScript({
-  func: () => window.getSelection()?.toString(),
+  func: () => window.getSelection(),
   target: {
     tabId: tab.id
   }
-}))[0].result : undefined;
+}))[0].result ?? undefined : undefined;
 
 const rootElement = document.getElementById('root');
 render(<App selection={selection} url={tab.url} />, rootElement);
