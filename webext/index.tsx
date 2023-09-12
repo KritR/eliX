@@ -2,13 +2,60 @@ import { render } from 'react-dom';
 import {
   FluentProvider,
   webLightTheme,
-  Button
+  Title1,
+  Card,
+  Body1,
+  Divider,
+  Skeleton,
+  SkeletonItem,
+  makeStyles,
 } from '@fluentui/react-components';
+import { useEffect, useState } from 'react';
+
+const useStyles = makeStyles({
+  root: {
+    color: webLightTheme.colorPaletteCranberryForeground2,
+    marginBottom: webLightTheme.spacingVerticalM,
+  }
+});
 
 function App({ selection }: { selection: string | undefined }) {
+  const classes = useStyles();
+
+  const [explanation, setExplanation] = useState();
+  useEffect(() => {
+    let ignore = false;
+    setExplanation(undefined);
+    window.fetch('https://elixbackend.fly.dev/explain', {
+      method: 'POST',
+      body: JSON.stringify({ selection }),
+    }).then((response) => response.json()).then((json) => {
+      console.log(json);
+      if (!ignore) {
+        console.log('set');
+        setExplanation(json);
+      }
+    });
+    return () => { ignore = true; };
+  }, [selection]);
+
   return (
     <FluentProvider theme={webLightTheme}>
-      <Button appearance="primary">{selection ?? 'Nothing'}</Button>
+      <Title1 className={classes.root}>EliX</Title1>
+      <Card>
+        <Body1>
+          {selection ?? 'Nothing'}
+        </Body1>
+        <Divider />
+        <Body1>
+          {explanation
+            ? explanation
+            : <Skeleton>
+              <SkeletonItem />
+              <SkeletonItem />
+            </Skeleton>}
+        </Body1>
+      </Card>
     </FluentProvider>
   );
 }
