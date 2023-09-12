@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   }
 });
 
-function App({ selection, url }: { selection: Selection | undefined, url: string | undefined }) {
+function App({ selection, url }: { selection: string | undefined, url: string | undefined }) {
   const classes = useStyles();
 
   const [explanation, setExplanation] = useState();
@@ -46,7 +46,7 @@ function App({ selection, url }: { selection: Selection | undefined, url: string
       <Title1 className={classes.root}>EliX</Title1>
       <Card>
         <Body1>
-          {selection?.type === 'range' ? selection.toString() : 'Nothing'}
+          {selection ?? 'Nothing'}
         </Body1>
         <Divider />
         <Body1>
@@ -72,12 +72,29 @@ async function getCurrentTab() {
 }
 
 const tab = await getCurrentTab();
-const selection = tab?.id ? (await chrome.scripting.executeScript({
-  func: () => window.getSelection(),
-  target: {
-    tabId: tab.id
+
+async function getSelection(tab: chrome.tabs.Tab | undefined) {
+  if (tab?.id === undefined) {
+    return undefined;
   }
-}))[0].result ?? undefined : undefined;
+
+  const [{ result }] = await chrome.scripting.executeScript({
+    func: () => {
+      const selection = window.getSelection();
+      if (selection?.type === 'Range') {
+        return selection.toString();
+      }
+      return undefined;
+    },
+    target: {
+      tabId: tab.id,
+    }
+  });
+
+  return result;
+}
+
+const selection = await getSelection(tab);
 
 const rootElement = document.getElementById('root');
 render(<App selection={selection} url={tab.url} />, rootElement);
