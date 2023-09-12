@@ -24,19 +24,19 @@ function App({ selection }: { selection: string | undefined }) {
 
   const [explanation, setExplanation] = useState();
   useEffect(() => {
-    let ignore = false;
+    const abortController = new AbortController();
     setExplanation(undefined);
     window.fetch('https://elixbackend.fly.dev/explain', {
       method: 'POST',
       body: JSON.stringify({ selection }),
+      signal: abortController.signal,
     }).then((response) => response.json()).then((json) => {
       console.log(json);
-      if (!ignore) {
-        console.log('set');
-        setExplanation(json);
-      }
+      setExplanation(json);
     });
-    return () => { ignore = true; };
+    return () => {
+      abortController.abort();
+    };
   }, [selection]);
 
   return (
