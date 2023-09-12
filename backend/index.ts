@@ -69,7 +69,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
 
-app.use(limiter);
+// app.use(limiter);
 
 app.post("/explain", async (req: Request, res: Response) => {
   if (!process.env.OPENAI_API_KEY) {
