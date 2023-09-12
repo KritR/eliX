@@ -19,20 +19,23 @@ const useStyles = makeStyles({
   }
 });
 
-function App({ selection }: { selection: string | undefined }) {
+function App({ selection, url }: { selection: string | undefined, url: string | undefined }) {
   const classes = useStyles();
 
   const [explanation, setExplanation] = useState();
   useEffect(() => {
+    console.log('fetching');
     const abortController = new AbortController();
     setExplanation(undefined);
     window.fetch('https://elixbackend.fly.dev/explain', {
       method: 'POST',
-      body: JSON.stringify({ selection }),
+      body: JSON.stringify({
+        selection,
+        url,
+      }),
       signal: abortController.signal,
     }).then((response) => response.json()).then((json) => {
-      console.log(json);
-      setExplanation(json);
+      setExplanation(json.explanation);
     });
     return () => {
       abortController.abort();
@@ -78,4 +81,4 @@ const selection = tab?.id ? (await chrome.scripting.executeScript({
 }))[0].result : undefined;
 
 const rootElement = document.getElementById('root');
-render(<App selection={selection} />, rootElement);
+render(<App selection={selection} url={tab.url} />, rootElement);
