@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { rateLimit } from 'express-rate-limit'
 import express from "express";
+import cors from 'cors';
 import OpenAI from "openai";
 
 const app = express();
@@ -60,6 +61,7 @@ const functions = [
   },
 ];
 
+app.use(cors())
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
