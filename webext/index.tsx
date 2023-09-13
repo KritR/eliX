@@ -38,8 +38,6 @@ function App({ selection, url }: { selection: string | undefined, url: string | 
   );
 }
 
-console.log('init');
-
 async function getCurrentTab() {
   const queryOptions = {
     active: true,
@@ -53,7 +51,6 @@ const tab = await getCurrentTab();
 
 async function getSelection(tab: chrome.tabs.Tab | undefined) {
   if (tab?.id === undefined) {
-    console.log('No tab');
     return undefined;
   }
 
@@ -61,10 +58,8 @@ async function getSelection(tab: chrome.tabs.Tab | undefined) {
     func: () => {
       const selection = window.getSelection();
       if (selection?.type === 'Range') {
-        console.log(selection.toString());
         return selection.toString();
       }
-      console.log(selection?.type);
       return undefined;
     },
     target: {
