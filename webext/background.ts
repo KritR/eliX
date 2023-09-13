@@ -11,6 +11,10 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 chrome.contextMenus.onClicked.addListener(async (item, tab) => {
   if (item.selectionText && tab) {
-    await chrome.action.openPopup();
+    // @ts-expect-error - @types/chrome does not contain `open` yet.
+    await chrome.sidePanel.open({
+      // We are tab-scoped, not global.
+      tabId: tab.id,
+    });
   }
 });

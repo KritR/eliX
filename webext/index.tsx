@@ -14,7 +14,7 @@ const useStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    width: '300px',
+    minWidth: '300px',
     ...shorthands.padding(tokens.spacingVerticalS, tokens.spacingHorizontalS),
   },
   title: {
