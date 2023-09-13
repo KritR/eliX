@@ -13,6 +13,7 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
   if (item.selectionText && tab) {
     // @ts-expect-error - @types/chrome does not contain `open` yet.
     await chrome.sidePanel.open({
+      // We are tab-scoped, not global.
       tabId: tab.id,
     });
   }
