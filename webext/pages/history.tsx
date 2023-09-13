@@ -1,15 +1,40 @@
 import * as React from "react";
 import { Button, Title2, makeStyles } from "@fluentui/react-components";
-import { Card, CardFooter, Caption2, CardPreview, Body1 } from "@fluentui/react-components";
+import { Card, CardFooter, Caption1, CardPreview, Body1, Link } from "@fluentui/react-components";
+import { Link24Regular } from '@fluentui/react-icons'
 
 const useStyles = makeStyles({
+  page: {
+    width: '260px', 
+    minHeight: '400px',
+  },
   title: {
     color: "#53164D"
   },
   card: {
-    marginTop: "20px"
+    marginTop: "20px",
+    marginBottom: "20px"
+  },
+  footer: {
+    color: '#765C5C',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   }
 })
+
+function truncateText(str: string, chars: number)
+{
+  if (str.length > (chars - 3))
+  {
+    return str.substring(0, (chars - 3)) + "...";
+  }
+  else
+  {
+    return str;
+  }
+}
 
 function HistoryList(_) {
   const styles = useStyles();
@@ -40,9 +65,13 @@ function HistoryList(_) {
       {listItems.map((item) => {
         return (
           <Card key={item.id} className={styles.card}>
-            <Body1>{item.content}</Body1>
-            <CardFooter>
-              <Caption2>{item.url}</Caption2>
+            <Body1>{truncateText(item.content, 150)}</Body1>
+            <CardFooter className={styles.footer}>
+              <Caption1>{item.date}</Caption1>
+              
+              <Link appearance="subtle" inline={true} onClick={() => { 
+                chrome.tabs.create({ url: item.url});
+              }} href={item.url}>{truncateText(item.url, 20)}</Link>
             </CardFooter>
           </Card>
         );
@@ -55,7 +84,7 @@ export default function History() {
   const styles = useStyles();
 
   return (
-    <div style={{width: '260px', height: '400px', padding: '15px', borderRadius: "4px"}}>
+    <div className={styles.page} style={{padding: '15px'}}>
       <Title2 className={styles.title}>Previous Explanations</Title2>
       <HistoryList />
     </div>
