@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { rateLimit } from 'express-rate-limit'
 import express from "express";
+import cors from 'cors';
 import OpenAI from "openai";
 
 const app = express();
@@ -60,6 +61,7 @@ const functions = [
   },
 ];
 
+app.use(cors())
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -67,7 +69,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
 
-app.use(limiter);
+// app.use(limiter);
 
 app.post("/explain", async (req: Request, res: Response) => {
   if (!process.env.OPENAI_API_KEY) {

@@ -3,7 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "build": "esbuild index.tsx background.ts --bundle --minify --outdir=dist",
+    "build": "esbuild index.tsx background.ts --bundle --minify --format=esm --outdir=dist",
     "build:dev": "npm run build -- --sourcemap",
     "watch": "npm run build:dev -- --watch"
   },
