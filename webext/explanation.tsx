@@ -51,19 +51,43 @@ const useStyles = makeStyles({
 export default function Explanation({ selection, url }: { selection: string, url: string | undefined }) {
   const classes = useStyles();
 
-  const [explanation, setExplanation] = useState();
+  const [explanation, setExplanationContent] = useState();
+
+  const newExplanation = async (explanation: string) => {
+
+    setExplanationContent(explanation);
+
+    let storage = await chrome.storage.local.get();
+
+    let prevHistory = [];
+    if ('history' in storage)
+    {
+      prevHistory = JSON.parse(storage['history']);
+    }
+
+    prevHistory.push({selection: selection, explanation: explanation, url: url, timestamp: Date.now()});
+
+    await chrome.storage.local.set({'history': JSON.stringify(prevHistory)})
+    
+    console.log("Updated explanation list");
+
+  };
+
   useEffect(() => {
     const abortController = new AbortController();
-    setExplanation(undefined);
+    setExplanationContent(undefined);
     window.fetch('https://elixbackend.fly.dev/explain', {
       method: 'POST',
       body: JSON.stringify({
-        selection,
-        url,
+        selection: selection,
+        url: url,
       }),
+      headers: {
+        "Content-Type": "application/json"
+      },
       signal: abortController.signal,
     }).then((response) => response.json()).then((json) => {
-      setExplanation(json.explanation);
+      newExplanation(json.explanation);
     });
     return () => {
       abortController.abort();
