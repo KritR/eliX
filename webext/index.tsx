@@ -2,65 +2,43 @@ import { render } from 'react-dom';
 import {
   FluentProvider,
   webLightTheme,
-  Title1,
-  Card,
   Body1,
-  Divider,
-  Skeleton,
-  SkeletonItem,
+  Title1,
   makeStyles,
+  tokens,
+  shorthands
 } from '@fluentui/react-components';
-import { useEffect, useState } from 'react';
+import Explanation from './explanation';
 
 const useStyles = makeStyles({
   root: {
-    color: webLightTheme.colorPaletteCranberryForeground2,
-    marginBottom: webLightTheme.spacingVerticalM,
+    display: 'flex',
+    flexDirection: 'column',
+    width: '300px',
+    ...shorthands.padding(tokens.spacingVerticalS, tokens.spacingHorizontalS),
+  },
+  title: {
+    color: tokens.colorPaletteCranberryForeground2,
+    marginBottom: tokens.spacingVerticalM,
   }
 });
 
 function App({ selection, url }: { selection: string | undefined, url: string | undefined }) {
   const classes = useStyles();
 
-  const [explanation, setExplanation] = useState();
-  useEffect(() => {
-    const abortController = new AbortController();
-    setExplanation(undefined);
-    window.fetch('https://elixbackend.fly.dev/explain', {
-      method: 'POST',
-      body: JSON.stringify({
-        selection,
-        url,
-      }),
-      signal: abortController.signal,
-    }).then((response) => response.json()).then((json) => {
-      setExplanation(json.explanation);
-    });
-    return () => {
-      abortController.abort();
-    };
-  }, [selection]);
-
   return (
-    <FluentProvider theme={webLightTheme}>
-      <Title1 className={classes.root}>EliX</Title1>
-      <Card>
-        <Body1>
-          {selection ?? 'Nothing'}
-        </Body1>
-        <Divider />
-        <Body1>
-          {explanation
-            ? explanation
-            : <Skeleton>
-              <SkeletonItem />
-              <SkeletonItem />
-            </Skeleton>}
-        </Body1>
-      </Card>
+    <FluentProvider theme={webLightTheme} className={classes.root}>
+      <Title1 className={classes.title}>EliX</Title1>
+      {
+        selection
+          ? <Explanation selection={selection} url={url} />
+          : <Body1>History</Body1>
+      }
     </FluentProvider>
   );
 }
+
+console.log('init');
 
 async function getCurrentTab() {
   const queryOptions = {
@@ -75,6 +53,7 @@ const tab = await getCurrentTab();
 
 async function getSelection(tab: chrome.tabs.Tab | undefined) {
   if (tab?.id === undefined) {
+    console.log('No tab');
     return undefined;
   }
 
@@ -82,8 +61,10 @@ async function getSelection(tab: chrome.tabs.Tab | undefined) {
     func: () => {
       const selection = window.getSelection();
       if (selection?.type === 'Range') {
+        console.log(selection.toString());
         return selection.toString();
       }
+      console.log(selection?.type);
       return undefined;
     },
     target: {
