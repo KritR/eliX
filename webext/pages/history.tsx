@@ -56,7 +56,7 @@ function HistoryList(_) {
 
   return (
     <div>
-      {history.map((item) => {
+      {history.reverse().map((item) => {
         return (
           <Card key={item.timestamp} className={styles.card}>
             <Body1>{truncateText(item.selection, 150)}</Body1>
