@@ -1,4 +1,5 @@
 import { render } from 'react-dom';
+import History from './pages/history';
 import {
   FluentProvider,
   webLightTheme,
@@ -32,7 +33,7 @@ function App({ selection, url }: { selection: string | undefined, url: string | 
       {
         selection
           ? <Explanation selection={selection} url={url} />
-          : <Body1>History</Body1>
+          : <History />
       }
     </FluentProvider>
   );
