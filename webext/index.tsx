@@ -3,8 +3,6 @@ import History from './pages/history';
 import {
   FluentProvider,
   webLightTheme,
-  Body1,
-  Title1,
   makeStyles,
   tokens,
   shorthands
@@ -17,10 +15,6 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     minWidth: '300px',
     ...shorthands.padding(tokens.spacingVerticalS, tokens.spacingHorizontalS),
-  },
-  title: {
-    color: tokens.colorPaletteCranberryForeground2,
-    marginBottom: tokens.spacingVerticalM,
   }
 });
 
@@ -29,7 +23,6 @@ function App({ selection, url }: { selection: string | undefined, url: string | 
 
   return (
     <FluentProvider theme={webLightTheme} className={classes.root}>
-      <Title1 className={classes.title}>EliX</Title1>
       {
         selection
           ? <Explanation selection={selection} url={url} />

@@ -5,6 +5,7 @@ import {
   Divider,
   Skeleton,
   SkeletonItem,
+  Title1,
   makeStyles,
   mergeClasses,
   shorthands,
@@ -13,6 +14,14 @@ import {
 import { useEffect, useState } from 'react';
 
 const useStyles = makeStyles({
+  page: {
+    width: '260px', 
+    minHeight: '400px',
+  },
+  title: {
+    color: tokens.colorPaletteCranberryForeground2,
+    marginBottom: tokens.spacingVerticalM,
+  },
   row: {
     marginTop: tokens.spacingVerticalL,
     '> *:not(:last-child)': {
@@ -51,11 +60,14 @@ const useStyles = makeStyles({
 export default function Explanation({ selection, url }: { selection: string, url: string | undefined }) {
   const classes = useStyles();
 
+  const [suggestedPerspectives, setPerspectives] = useState([]);
+  const [suggestedQueries, setSuggestedQueries] = useState([]);
   const [explanation, setExplanationContent] = useState();
 
-  const newExplanation = async (explanation: string) => {
-
+  const newExplanation = async (explanation: string, viewpoints: string[], queries: string[]) => {
     setExplanationContent(explanation);
+    setSuggestedQueries(queries || []);
+    setPerspectives(viewpoints || []);
 
     let storage = await chrome.storage.local.get();
 
@@ -87,7 +99,8 @@ export default function Explanation({ selection, url }: { selection: string, url
       },
       signal: abortController.signal,
     }).then((response) => response.json()).then((json) => {
-      newExplanation(json.explanation);
+      console.log(json);
+      newExplanation(json.explanation, json.suggested_viewpoints, json.suggested_queries);
     });
     return () => {
       abortController.abort();
@@ -95,7 +108,8 @@ export default function Explanation({ selection, url }: { selection: string, url
   }, [selection]);
 
   return (
-    <>
+    <div className={classes.page} style={{padding: '15px'}}>
+      <Title1 className={classes.title}>EliX</Title1>
       <Card>
         <Body1>
           {selection}
@@ -118,19 +132,19 @@ export default function Explanation({ selection, url }: { selection: string, url
         </Body1>
       </Card>
       <div className={classes.row}>
-        <Button>Search query 1</Button>
-        <Button>Search query 2</Button>
-        <Button>Search query 3</Button>
+        { suggestedQueries.map((q) => {
+          return <Button size="small">{q}</Button>
+        })}
       </div>
       <div className={classes.row}>
-        <Button>Perspective 1</Button>
-        <Button>Perspective 2</Button>
-        <Button>Perspective 3</Button>
+        { suggestedPerspectives.map((q) => {
+          return <Button size="small">{q}</Button>
+        })}
       </div>
       <div className={mergeClasses(classes.row, classes.easierHarder)}>
         <Button>Easier</Button>
         <Button>Harder</Button>
       </div>
-    </>
+    </div>
   );
 }
