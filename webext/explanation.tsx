@@ -57,6 +57,12 @@ const useStyles = makeStyles({
   }
 });
 
+function openSearchInNewTab(query: string) {
+  const url = new URL(`https://google.com/search`);
+  url.searchParams.set('q', query);
+  chrome.tabs.create({ url: url.href });
+}
+
 export default function Explanation({ selection, url }: { selection: string, url: string | undefined }) {
   const classes = useStyles();
 
@@ -133,7 +139,7 @@ export default function Explanation({ selection, url }: { selection: string, url
       </Card>
       <div className={classes.row}>
         { suggestedQueries.map((q) => {
-          return <Button size="small">{q}</Button>
+          return <Button size="small" onClick={() => openSearchInNewTab(q)}>{q}</Button>
         })}
       </div>
       <div className={classes.row}>
