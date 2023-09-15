@@ -3,7 +3,7 @@
 chrome.runtime.onInstalled.addListener(async () => {
   chrome.contextMenus.create({
     id: 'explain',
-    title: 'ELIX Explanation',
+    title: 'Explain with Insight',
     type: 'normal',
     contexts: ['selection']
   });

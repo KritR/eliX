@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "eliX",
+  "name": "Insight Explanations",
   "description": "Content explanations curated for you!",
   "version": "1.0",
   "permissions": [
@@ -16,9 +16,12 @@
   },
   "action": {
     "default_popup": "index.html",
-    "default_icon": "elix_logo.png"
+    "default_icon": "elix_logo_head.png"
   },
   "side_panel": {
     "default_path": "index.html"
+  },
+  "icons": {
+    "16": "elix_logo_head.png"
   }
 }
