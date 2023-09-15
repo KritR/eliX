@@ -119,7 +119,7 @@ export default function Explanation({ selection, url }: { selection: string, url
 
   return (
     <div className={classes.page} style={{padding: '15px'}}>
-      <Title1 className={classes.title}>EliX</Title1>
+      <Title1 className={classes.title}>Insight Explanation</Title1>
       <Card>
         <Body1>
           {selection}
