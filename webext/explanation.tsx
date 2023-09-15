@@ -69,6 +69,8 @@ export default function Explanation({ selection, url }: { selection: string, url
   const [suggestedPerspectives, setPerspectives] = useState([]);
   const [suggestedQueries, setSuggestedQueries] = useState([]);
   const [explanation, setExplanationContent] = useState();
+  const [difficulty, setDifficulty] = useState(2);
+  const [perspective, setNewPerspective] = useState('default');
 
   const newExplanation = async (explanation: string, viewpoints: string[], queries: string[]) => {
     setExplanationContent(explanation);
@@ -99,6 +101,8 @@ export default function Explanation({ selection, url }: { selection: string, url
       body: JSON.stringify({
         selection: selection,
         url: url,
+        difficulty: difficulty,
+        role: perspective
       }),
       headers: {
         "Content-Type": "application/json"
@@ -111,7 +115,7 @@ export default function Explanation({ selection, url }: { selection: string, url
     return () => {
       abortController.abort();
     };
-  }, [selection]);
+  }, [selection, difficulty, perspective]);
 
   return (
     <div className={classes.page} style={{padding: '15px'}}>
@@ -144,12 +148,12 @@ export default function Explanation({ selection, url }: { selection: string, url
       </div>
       <div className={classes.row}>
         { suggestedPerspectives.map((q) => {
-          return <Button size="small">{q}</Button>
+          return <Button size="small" onClick={() => setNewPerspective(q)}>{q}</Button>
         })}
       </div>
       <div className={mergeClasses(classes.row, classes.easierHarder)}>
-        <Button>Easier</Button>
-        <Button>Harder</Button>
+        <Button onClick={() => setDifficulty(difficulty - 1)}>Easier</Button>
+        <Button onClick={() => setDifficulty(difficulty + 1)}>Harder</Button>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from 'react';
 import { Button, Title2, makeStyles } from "@fluentui/react-components";
-import { Card, CardFooter, Caption1, CardPreview, Body1, Link } from "@fluentui/react-components";
+import { Card, CardFooter, Caption1, CardPreview, Body1, Divider, Link } from "@fluentui/react-components";
 import { Link24Regular } from '@fluentui/react-icons'
 
 const useStyles = makeStyles({
@@ -60,6 +60,9 @@ function HistoryList(_) {
         return (
           <Card key={item.timestamp} className={styles.card}>
             <Body1>{truncateText(item.selection, 150)}</Body1>
+            <Divider />
+            <Body1>{item.explanation}</Body1>
+
             <CardFooter className={styles.footer}>
               <Caption1>{new Date(item.timestamp).toDateString()}</Caption1>
               
